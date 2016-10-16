@@ -45,6 +45,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let indexPath = tableView.indexPath(for: sender as! UITableViewCell)
         let movie = self.movies[(indexPath?.row)!]
         let posterImageFilename = movie["poster_path"].string
+        let backdropImageFilename = movie["backdrop_path"].string
         let movieTitle = movie["title"].string
         let overview = movie["overview"].string
         let releaseDate = movie["release_date"].string
@@ -56,6 +57,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         {
             detailsViewController.dataPosterBackgroundImageViewUrl = "https://image.tmdb.org/t/p/w500\(posterImageFilename!)"
         }
+        else if (backdropImageFilename != nil)
+        {
+            detailsViewController.dataPosterBackgroundImageViewUrl = "https://image.tmdb.org/t/p/w500\(backdropImageFilename!)"
+        }
+        
         detailsViewController.dataMovieTitle = movieTitle
         detailsViewController.dataOverview = overview
         detailsViewController.dataReleaseDate = releaseDate
@@ -76,17 +82,32 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let title = movie["title"].string
         let overview = movie["overview"].string
         let posterImageFilename = movie["poster_path"].string
+        let backdropImageFilename = movie["backdrop_path"].string
         
         cell.titleLabel.text = title
         cell.overviewLabel.numberOfLines = 0
         cell.overviewLabel.text = overview
         
+        cell.posterImage.contentMode = .scaleAspectFit
         if (posterImageFilename != nil)
         {
             let posterImageUrl = URL(string:"https://image.tmdb.org/t/p/w500\(posterImageFilename!)")
-            cell.posterImage.contentMode = .scaleAspectFit
             cell.posterImage.setImageWith(posterImageUrl!)
         }
+        else if (backdropImageFilename != nil)
+        {
+            let posterImageUrl = URL(string:"https://image.tmdb.org/t/p/w500\(backdropImageFilename!)")
+            cell.posterImage.setImageWith(posterImageUrl!)
+        }
+        else
+        {
+            cell.posterImage.image = nil
+        }
+        
+        cell.posterImage.alpha = 0
+        UIView.animate(withDuration: 0.65 * (Double(indexPath.row) + 1), animations: {
+            cell.posterImage.alpha = 1
+        })
         
         return cell
     }
@@ -96,7 +117,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
-        getNowPlaying(page: self.moviePageOffset, showProgress: false)
+        getNowPlaying(page: self.moviePageOffset, showProgress: true)
     }
     
     private func getNowPlaying(page: Int = 1, showProgress: Bool = true) {

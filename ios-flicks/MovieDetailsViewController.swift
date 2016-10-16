@@ -39,6 +39,14 @@ class MovieDetailsViewController: UIViewController {
             let url = URL(string: self.dataPosterBackgroundImageViewUrl!)!
             self.posterBackgroundImageView.setImageWith(url)
         }
+        else {
+            self.posterBackgroundImageView.image = nil
+        }
+        self.posterBackgroundImageView.alpha = 0
+        UIView.animate(withDuration: 0.65, animations: {
+            self.posterBackgroundImageView.alpha = 1
+        })
+        
         self.movieTitle.text = self.dataMovieTitle
         self.releaseDate.text = self.dataReleaseDate
         self.voteAverage.text = String(self.dataVoteAverage)
