@@ -33,6 +33,7 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 <img src='https://github.com/plushysmurf3/ios-flicks/blob/master/flicks_licecap.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/plushysmurf3/ios-flicks/blob/master/flicks_networkerror_licecap.gif' title='Video Walkthrough - Network Outage' width='' alt='Video Walkthrough - Network Outage' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
