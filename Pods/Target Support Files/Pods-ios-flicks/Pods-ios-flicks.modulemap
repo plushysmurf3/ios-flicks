@@ -1,0 +1,6 @@
+framework module Pods_ios_flicks {
+  umbrella header "Pods-ios-flicks-umbrella.h"
+
+  export *
+  module * { export * }
+}
