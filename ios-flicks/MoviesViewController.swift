@@ -44,8 +44,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let detailsViewController = segue.destination as! MovieDetailsViewController
         let indexPath = tableView.indexPath(for: sender as! UITableViewCell)
         let movie = self.movies[(indexPath?.row)!]
-        let posterImageFilename = movie["poster_path"].string
-        let backdropImageFilename = movie["backdrop_path"].string
+        let posterImageUrlString = getPosterImageUrl(movie: movie)
         let movieTitle = movie["title"].string
         let overview = movie["overview"].string
         let releaseDate = movie["release_date"].string
@@ -53,13 +52,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let popularity = movie["popularity"].float
         let voteAverage = movie["vote_average"].float
         
-        if (posterImageFilename != nil)
+        if (posterImageUrlString != nil)
         {
-            detailsViewController.dataPosterBackgroundImageViewUrl = "https://image.tmdb.org/t/p/w500\(posterImageFilename!)"
-        }
-        else if (backdropImageFilename != nil)
-        {
-            detailsViewController.dataPosterBackgroundImageViewUrl = "https://image.tmdb.org/t/p/w500\(backdropImageFilename!)"
+            detailsViewController.dataPosterBackgroundImageViewUrl = posterImageUrlString!
         }
         
         detailsViewController.dataMovieTitle = movieTitle
@@ -81,22 +76,16 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let movie = movies[indexPath.row]
         let title = movie["title"].string
         let overview = movie["overview"].string
-        let posterImageFilename = movie["poster_path"].string
-        let backdropImageFilename = movie["backdrop_path"].string
+        let posterImageUrlString = getPosterImageUrl(movie: movie)
         
         cell.titleLabel.text = title
         cell.overviewLabel.numberOfLines = 0
         cell.overviewLabel.text = overview
         
         cell.posterImage.contentMode = .scaleAspectFit
-        if (posterImageFilename != nil)
+        if (posterImageUrlString != nil)
         {
-            let posterImageUrl = URL(string:"https://image.tmdb.org/t/p/w500\(posterImageFilename!)")
-            cell.posterImage.setImageWith(posterImageUrl!)
-        }
-        else if (backdropImageFilename != nil)
-        {
-            let posterImageUrl = URL(string:"https://image.tmdb.org/t/p/w500\(backdropImageFilename!)")
+            let posterImageUrl = URL(string:posterImageUrlString!)
             cell.posterImage.setImageWith(posterImageUrl!)
         }
         else
@@ -105,7 +94,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
         
         cell.posterImage.alpha = 0
-        UIView.animate(withDuration: 0.65 * (Double(indexPath.row) + 1), animations: {
+        UIView.animate(withDuration: 0.25 * (Double(indexPath.row % 4) + 1), animations: {
             cell.posterImage.alpha = 1
         })
         
@@ -120,9 +109,30 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         getNowPlaying(page: self.moviePageOffset, showProgress: true)
     }
     
+    private func getPosterImageUrl(movie: JSON) -> String?
+    {
+        let tmdbImageBaseUrl: String = "https://image.tmdb.org/t/p/w500"
+        let posterImageFilename = movie["poster_path"].string
+        let backdropImageFilename = movie["backdrop_path"].string
+        
+        if (posterImageFilename != nil)
+        {
+            return "\(tmdbImageBaseUrl)\(posterImageFilename!)"
+        }
+        else if (backdropImageFilename != nil)
+        {
+            return "\(tmdbImageBaseUrl)\(backdropImageFilename!)"
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
     private func getNowPlaying(page: Int = 1, showProgress: Bool = true) {
+        let tmdbNowPlayingBaseUrl: String = "https://api.themoviedb.org/3/movie/now_playing"
         let lang = "en-US"
-        let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(tmdbApiKey)&language=\(lang)&page=\(page)")
+        let url = URL(string:"\(tmdbNowPlayingBaseUrl)?api_key=\(tmdbApiKey)&language=\(lang)&page=\(page)")
         let request = URLRequest(url: url!)
         let session = URLSession(
             configuration: URLSessionConfiguration.default,

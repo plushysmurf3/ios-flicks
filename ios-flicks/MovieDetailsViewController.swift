@@ -7,6 +7,7 @@
 //
 
 import AFNetworking
+import SwiftIconFont
 import UIKit
 
 class MovieDetailsViewController: UIViewController {
@@ -43,16 +44,20 @@ class MovieDetailsViewController: UIViewController {
             self.posterBackgroundImageView.image = nil
         }
         self.posterBackgroundImageView.alpha = 0
-        UIView.animate(withDuration: 0.65, animations: {
+        self.posterBackgroundImageView.center.y = UIScreen.main.bounds.height + self.posterBackgroundImageView.frame.height / 2
+        UIView.animate(withDuration: 1.0, animations: {
             self.posterBackgroundImageView.alpha = 1
+            self.posterBackgroundImageView.center.y = UIScreen.main.bounds.height / 2
         })
         
         self.movieTitle.text = self.dataMovieTitle
         self.releaseDate.text = self.dataReleaseDate
-        self.voteAverage.text = String(self.dataVoteAverage)
-        self.language.text = self.dataLanguage
+        self.language.text = getTranslatedLanguageFromCode(lang: self.dataLanguage)
+        self.voteAverage.font = UIFont.icon(from: .FontAwesome, ofSize: 17)
+        self.voteAverage.text = String.fontAwesomeIcon("star")! + " " + String(self.dataVoteAverage) + " / 10"
+        self.popularity.font = UIFont.icon(from: .FontAwesome, ofSize: 17)
+        self.popularity.text = String.fontAwesomeIcon("trophy")! + " " + String(format: "%.0f", self.dataPopularity) + "%"
         self.overview.text = self.dataOverview
-        self.popularity.text = String(self.dataPopularity)
         
         let originalOverviewHeight = self.overview.frame.height
         self.overview.sizeToFit()
@@ -73,15 +78,10 @@ class MovieDetailsViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    private func getTranslatedLanguageFromCode(lang:String) -> String
+    {
+        let locale = NSLocale(localeIdentifier: lang)
+        return locale.displayName(forKey: NSLocale.Key.identifier, value: lang)!
     }
-    */
 
 }

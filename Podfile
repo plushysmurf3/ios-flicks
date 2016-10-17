@@ -10,5 +10,6 @@ target 'ios-flicks' do
   pod 'AFNetworking', '~> 2.6'
   pod 'SwiftyJSON'
   pod 'MBProgressHUD', '~> 1.0.0'
+  pod 'SwiftIconFont'
 
 end

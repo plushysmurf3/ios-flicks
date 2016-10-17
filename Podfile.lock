@@ -21,18 +21,21 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - MBProgressHUD (1.0.0)
+  - SwiftIconFont (2.6.0)
   - SwiftyJSON (3.1.1)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.6)
   - MBProgressHUD (~> 1.0.0)
+  - SwiftIconFont
   - SwiftyJSON
 
 SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  SwiftIconFont: bbe1f32e1e16bac87dad8566afc80132cb8d072c
   SwiftyJSON: f0be2e604f83e8405a624e9f891898bf6ed4e019
 
-PODFILE CHECKSUM: 8a2fb14243dec985b749752aceb1fd9d86eb1297
+PODFILE CHECKSUM: bddca78d2442678a1737ed67fe2f27d34f993e20
 
 COCOAPODS: 1.1.0.rc.2
