@@ -18,7 +18,7 @@ The following **optional** features are implemented:
 
 - [y] Add a tab bar for **Now Playing** and **Top Rated** movies.
 - [ ] Implement segmented control to switch between list view and grid view.
-- [ ] Add a search bar.
+- [y] Add a search bar.
 - [y] All images fade in.
 - [ ] For the large poster, load the low-res image first, switch to high-res when complete.
 - [y] Customize the highlight and selection effect of the cell.
@@ -29,6 +29,7 @@ The following **additional** features are implemented:
 - [y] Utilizing Awesome Font for icons
 - [y] Custom color theme for application
 - [y] Fallback handling for failed rendering of poster images (Fallback to backdropImage and as a last resort, to nil image)
+- [y] Keyboard dismiss when not searching
 
 ## Video Walkthrough
 

@@ -11,10 +11,11 @@ import SwiftyJSON
 import UIKit
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate {
     var apiAction: String = ""
     var navigationTitle: String = ""
     
+    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var networkErrorView: UIView!
     let refreshControl = UIRefreshControl()
@@ -22,12 +23,16 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     private let tmdbApiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     
     private var movies:Array<JSON> = Array<JSON>()
+    private var filteredMovies:Array<JSON> = Array<JSON>()
     private var moviePageOffset = 1
+    private var isSearchActive : Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+
+        searchBar.delegate = self
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -41,9 +46,14 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             navigationTitle = "Now Playing"
         }
         
+        let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(searchBarHideKeyboard(sender:)))
+        tableView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.cancelsTouchesInView = false;
+        tapGestureRecognizer.delegate = tableView as! UIGestureRecognizerDelegate?
+        
         getMovies(action: apiAction)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -52,7 +62,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let detailsViewController = segue.destination as! MovieDetailsViewController
         let indexPath = tableView.indexPath(for: sender as! UITableViewCell)
-        let movie = self.movies[(indexPath?.row)!]
+        let movie: JSON
+            
+        if (isSearchActive)
+        {
+            movie = self.filteredMovies[(indexPath?.row)!]
+        }
+        else
+        {
+            movie = self.movies[(indexPath?.row)!]
+        }
+        
         let posterImageUrlString = getPosterImageUrl(movie: movie)
         let movieTitle = movie["title"].string
         let overview = movie["overview"].string
@@ -73,16 +93,53 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         detailsViewController.dataPopularity = popularity
         detailsViewController.dataVoteAverage = voteAverage
     }
+    
+    // searchBar methods
+    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        if (searchBar.text?.isEmpty)! {
+            isSearchActive = false
+        }
+        else {
+            isSearchActive = true
+        }
+    }
+    
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isSearchActive = false
+    }
+    
+    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        isSearchActive = false
+    }
+    
+    public func searchBarHideKeyboard(sender: AnyObject) {
+        self.searchBar.endEditing(true)
+    }
 
+    // tableView methods
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
+        if (isSearchActive) {
+            return filteredMovies.count
+        }
+        
         return self.movies.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "com.iosflicks.MovieCell", for: indexPath) as! MovieCell
-        let movie = movies[indexPath.row]
+        let movie:JSON
+            
+        if (isSearchActive)
+        {
+            movie = filteredMovies[indexPath.row]
+        }
+        else
+        {
+            movie = movies[indexPath.row]
+        }
+        
         let title = movie["title"].string
         let overview = movie["overview"].string
         let posterImageUrlString = getPosterImageUrl(movie: movie)
@@ -113,6 +170,26 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
         getMovies(action: apiAction, page: self.moviePageOffset, showProgress: true)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if (!searchText.isEmpty)
+        {
+            isSearchActive = true
+            filterContentForSearchText(searchText: searchText)
+        }
+        else
+        {
+            isSearchActive = false
+        }
+        
+        self.tableView.reloadData()
+    }
+    
+    private func filterContentForSearchText(searchText: String) {
+        self.filteredMovies = self.movies.filter({( movie: JSON) -> Bool in
+            return (movie["title"].string?.lowercased().contains(searchText.lowercased()))!
+        })
     }
     
     private func getPosterImageUrl(movie: JSON) -> String?
@@ -157,6 +234,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             with: request,
             completionHandler: {
                 (dataOrNil, response, error) in
+                sleep(1)
                 
                 self.refreshControl.endRefreshing()
                 
