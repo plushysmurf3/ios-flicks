@@ -237,6 +237,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             with: request,
             completionHandler: {
                 (dataOrNil, response, error) in
+                
+                // this is here simply to demo the loading spinner
                 sleep(1)
                 
                 self.refreshControl.endRefreshing()
