@@ -34,6 +34,7 @@ class MovieDetailsViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        self.navigationItem.title = "Movie Details"
         self.posterBackgroundImageView.contentMode = .scaleAspectFill
         if (self.dataPosterBackgroundImageViewUrl != nil)
         {
@@ -44,10 +45,10 @@ class MovieDetailsViewController: UIViewController {
             self.posterBackgroundImageView.image = nil
         }
         self.posterBackgroundImageView.alpha = 0
-        self.posterBackgroundImageView.center.y = UIScreen.main.bounds.height + self.posterBackgroundImageView.frame.height / 2
-        UIView.animate(withDuration: 1.0, animations: {
+        self.posterBackgroundImageView.center.x = UIScreen.main.bounds.width + self.posterBackgroundImageView.frame.width / 2
+        UIView.animate(withDuration: 0.65, animations: {
             self.posterBackgroundImageView.alpha = 1
-            self.posterBackgroundImageView.center.y = UIScreen.main.bounds.height / 2
+            self.posterBackgroundImageView.center.x = UIScreen.main.bounds.width / 2
         })
         
         self.movieTitle.text = self.dataMovieTitle

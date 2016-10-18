@@ -12,7 +12,9 @@ import UIKit
 import MBProgressHUD
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    var apiAction: String = ""
+    var navigationTitle: String = ""
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var networkErrorView: UIView!
     let refreshControl = UIRefreshControl()
@@ -32,7 +34,14 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         refreshControl.addTarget(self, action: #selector(refreshControlAction(refreshControl:)), for: UIControlEvents.valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
-        getNowPlaying()
+        
+        if (apiAction.isEmpty)
+        {
+            apiAction = "now_playing"
+            navigationTitle = "Now Playing"
+        }
+        
+        getMovies(action: apiAction)
     }
 
     override func didReceiveMemoryWarning() {
@@ -83,14 +92,11 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         cell.overviewLabel.text = overview
         
         cell.posterImage.contentMode = .scaleAspectFit
+        cell.posterImage.image = nil
         if (posterImageUrlString != nil)
         {
             let posterImageUrl = URL(string:posterImageUrlString!)
             cell.posterImage.setImageWith(posterImageUrl!)
-        }
-        else
-        {
-            cell.posterImage.image = nil
         }
         
         cell.posterImage.alpha = 0
@@ -106,7 +112,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
-        getNowPlaying(page: self.moviePageOffset, showProgress: true)
+        getMovies(action: apiAction, page: self.moviePageOffset, showProgress: true)
     }
     
     private func getPosterImageUrl(movie: JSON) -> String?
@@ -129,10 +135,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    private func getNowPlaying(page: Int = 1, showProgress: Bool = true) {
-        let tmdbNowPlayingBaseUrl: String = "https://api.themoviedb.org/3/movie/now_playing"
+    private func getMovies(action: String = "now_playing", page: Int = 1, showProgress: Bool = true) {
+        let tmdbNowPlayingBaseUrl: String = "https://api.themoviedb.org/3/movie/"
         let lang = "en-US"
-        let url = URL(string:"\(tmdbNowPlayingBaseUrl)?api_key=\(tmdbApiKey)&language=\(lang)&page=\(page)")
+        let url = URL(string:"\(tmdbNowPlayingBaseUrl)\(action)?api_key=\(tmdbApiKey)&language=\(lang)&page=\(page)")
         let request = URLRequest(url: url!)
         let session = URLSession(
             configuration: URLSessionConfiguration.default,
@@ -140,6 +146,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             delegateQueue:OperationQueue.main
         )
         
+        self.navigationItem.title = navigationTitle
         self.networkErrorView.isHidden = true
         if (showProgress)
         {
@@ -150,6 +157,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             with: request,
             completionHandler: {
                 (dataOrNil, response, error) in
+                
+                self.refreshControl.endRefreshing()
                 
                 if (error != nil) {
                     self.networkErrorView.isHidden = false
@@ -170,8 +179,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 {
                     MBProgressHUD.hide(for: self.view, animated: true)
                 }
-                
-                self.refreshControl.endRefreshing()
         });
         task.resume()
 

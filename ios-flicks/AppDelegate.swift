@@ -6,16 +6,43 @@
 //  Copyright © 2016 Savio Tsui. All rights reserved.
 //
 
+import SwiftIconFont
 import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
-
+    internal var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        // Now Playing
+        let vc1 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "com.iosflicks.NavigationController") as! UINavigationController
+        vc1.tabBarItem.title = "Now Playing"
+        vc1.tabBarItem.icon(from: .FontAwesome, code: "film", imageSize: CGSize(width: 20, height: 20), ofSize: 20)
+        let vc1MovieController = vc1.viewControllers.first as! MoviesViewController
+        vc1MovieController.apiAction = "now_playing"
+        vc1MovieController.navigationTitle = "Now Playing"
+        
+        // Popular
+        let vc2 = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "com.iosflicks.NavigationController") as! UINavigationController
+        vc2.tabBarItem.title = "Popular"
+        vc2.tabBarItem.icon(from: .FontAwesome, code: "trophy", imageSize: CGSize(width: 20, height: 20), ofSize: 20)
+        let vc2MovieController = vc1.viewControllers.first as! MoviesViewController
+        vc2MovieController.apiAction = "popular"
+        vc2MovieController.navigationTitle = "Popular"
+        
+        // Set up the Tab Bar Controller to have two tabs
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [vc1, vc2]
+        tabBarController.selectedIndex = 0
+        tabBarController.selectedViewController = tabBarController.viewControllers?[0]
+        
+        // Make the Tab Bar Controller the root view controller
+        window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+        
         return true
     }
 
