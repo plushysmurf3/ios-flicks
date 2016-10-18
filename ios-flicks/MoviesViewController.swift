@@ -164,9 +164,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     self.networkErrorView.isHidden = false
                 }
                 else if let data = dataOrNil {
-                    // remove this before submission
-                    sleep(2)
-                
                     let json = JSON(data: data)
                     NSLog("json: \(json)")
                     let newMovies = json["results"].arrayValue as Array<JSON>

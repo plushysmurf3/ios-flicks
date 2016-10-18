@@ -16,24 +16,25 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [ ] Add a tab bar for **Now Playing** and **Top Rated** movies.
+- [y] Add a tab bar for **Now Playing** and **Top Rated** movies.
 - [ ] Implement segmented control to switch between list view and grid view.
 - [ ] Add a search bar.
 - [y] All images fade in.
 - [ ] For the large poster, load the low-res image first, switch to high-res when complete.
 - [y] Customize the highlight and selection effect of the cell.
-- [ ] Customize the navigation bar.
+- [y] Customize the navigation bar.
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [y] Utilizing Awesome Font for icons
+- [y] Custom color theme for application
+- [y] Fallback handling for failed rendering of poster images (Fallback to backdropImage and as a last resort, to nil image)
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
 <img src='https://github.com/plushysmurf3/ios-flicks/blob/master/flicks_licecap.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-<img src='https://github.com/plushysmurf3/ios-flicks/blob/master/flicks_networkerror_licecap.gif' title='Video Walkthrough - Network Outage' width='' alt='Video Walkthrough - Network Outage' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
