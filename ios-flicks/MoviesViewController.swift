@@ -18,7 +18,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var networkErrorView: UIView!
-    let refreshControl = UIRefreshControl()
+    
+    private let refreshControl = UIRefreshControl()
     
     private let tmdbApiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
     
@@ -40,16 +41,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         refreshControl.addTarget(self, action: #selector(refreshControlAction(refreshControl:)), for: UIControlEvents.valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
         
+        // gesture recognizer for tableView
+        let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(searchBarHideKeyboard(sender:)))
+        tableView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.cancelsTouchesInView = false;
+        tapGestureRecognizer.delegate = tableView as! UIGestureRecognizerDelegate?
+        
         if (apiAction.isEmpty)
         {
             apiAction = "now_playing"
             navigationTitle = "Now Playing"
         }
-        
-        let tapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(searchBarHideKeyboard(sender:)))
-        tableView.addGestureRecognizer(tapGestureRecognizer)
-        tapGestureRecognizer.cancelsTouchesInView = false;
-        tapGestureRecognizer.delegate = tableView as! UIGestureRecognizerDelegate?
         
         getMovies(action: apiAction)
     }
@@ -115,6 +117,20 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     public func searchBarHideKeyboard(sender: AnyObject) {
         self.searchBar.endEditing(true)
     }
+    
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if (!searchText.isEmpty)
+        {
+            isSearchActive = true
+            filterContentForSearchText(searchText: searchText)
+        }
+        else
+        {
+            isSearchActive = false
+        }
+        
+        self.tableView.reloadData()
+    }
 
     // tableView methods
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -168,22 +184,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    // refreshControl
     func refreshControlAction(refreshControl: UIRefreshControl) {
         getMovies(action: apiAction, page: self.moviePageOffset, showProgress: true)
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if (!searchText.isEmpty)
-        {
-            isSearchActive = true
-            filterContentForSearchText(searchText: searchText)
-        }
-        else
-        {
-            isSearchActive = false
-        }
-        
-        self.tableView.reloadData()
     }
     
     private func filterContentForSearchText(searchText: String) {

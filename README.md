@@ -26,6 +26,7 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
+- [y] Utilizing SwiftyJSON for parsing JSON data
 - [y] Utilizing Awesome Font for icons
 - [y] Custom color theme for application
 - [y] Fallback handling for failed rendering of poster images (Fallback to backdropImage and as a last resort, to nil image)
